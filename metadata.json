@@ -1,0 +1,5 @@
+{
+  "name": "Workie: Work Hours & Pay Calculator",
+  "description": "A modern web app to track work hours, calculate pay, and visualize weekly progress. All data is stored locally in your browser.",
+  "requestFramePermissions": []
+}
