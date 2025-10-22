@@ -1,3 +1,4 @@
+
 import { WorkLog } from '../types';
 // BREAK_DURATIONS is no longer directly used in the calculation logic here,
 // as breakDuration is now explicitly passed in the log object.
