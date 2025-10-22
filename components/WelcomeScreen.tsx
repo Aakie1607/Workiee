@@ -34,7 +34,7 @@ const WelcomeScreen: React.FC = () => {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen p-4">
-            <img src="https://res.cloudinary.com/dt2cxv6zw/image/upload/c_crop,w_320,h_180,ar_16:9/v1759421648/workie__1_-removebg-preview_uynvtc.png" alt="Workie Logo" className="w-full max-w-md mb-8" />
+            <img src="https://res.cloudinary.com/dt2cxv6zw/image/upload/c_crop,w_320,h_180,ar_16:9/v1759421648/workie__1_-removebg-preview_uynvtc.png" alt="Workie Logo" className="w-full max-w-xs mb-8" />
             <div className="w-full max-w-md p-8 space-y-8 bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg animate-fade-in-scale">
                 <style>{`
                     @keyframes fade-in-scale {

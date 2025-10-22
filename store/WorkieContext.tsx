@@ -150,6 +150,13 @@ const reducer = (state: AppState, action: Action): AppState => {
             saveSettingsForUser(newName, settings);
             localStorage.removeItem(`workie_settings_${oldName}`);
 
+            // Migrate tour completion status
+            const tourCompleted = localStorage.getItem(`workie_tour_completed_${oldName}`);
+            if (tourCompleted) {
+                localStorage.setItem(`workie_tour_completed_${newName}`, tourCompleted);
+                localStorage.removeItem(`workie_tour_completed_${oldName}`);
+            }
+
             sessionStorage.setItem('workie_currentUser', newName);
             const updatedUsers = state.users.map(u => u === oldName ? newName : u);
 
@@ -190,6 +197,7 @@ const reducer = (state: AppState, action: Action): AppState => {
             localStorage.removeItem(`workie_user_${username}`);
             localStorage.removeItem(`workie_avatar_${username}`);
             localStorage.removeItem(`workie_settings_${username}`);
+            localStorage.removeItem(`workie_tour_completed_${username}`); // Also remove tour status
             sessionStorage.removeItem('workie_currentUser');
             const updatedUsers = state.users.filter(u => u !== username);
             return {
