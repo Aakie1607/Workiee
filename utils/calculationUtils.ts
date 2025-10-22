@@ -1,8 +1,10 @@
 import { WorkLog } from '../types';
-import { BREAK_DURATIONS } from '../constants';
+// BREAK_DURATIONS is no longer directly used in the calculation logic here,
+// as breakDuration is now explicitly passed in the log object.
+// import { BREAK_DURATIONS } from '../constants'; 
 
 export const calculateHoursAndPay = (
-    log: Omit<WorkLog, 'id' | 'hoursWorked' | 'pay'>,
+    log: Omit<WorkLog, 'id' | 'hoursWorked' | 'pay'>, // The Omit type from WorkieContext is implicitly passed here.
     payRates: { [key: string]: number }
 ) => {
     const start = new Date(`${log.date}T${log.startTime}`);
@@ -14,10 +16,8 @@ export const calculateHoursAndPay = (
 
     let hours = (end.getTime() - start.getTime()) / 1000 / 60 / 60;
 
-    if (!log.skippedBreak) {
-        const lunch = BREAK_DURATIONS[log.workType] || 0;
-        hours -= lunch;
-    }
+    // Directly use the breakDuration from the log object
+    hours -= log.breakDuration; 
     
     hours = Math.max(0, hours);
 

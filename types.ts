@@ -9,7 +9,7 @@ export interface WorkLog {
   endTime: string; // HH:MM
   payType: string;
   customPayRate?: number;
-  skippedBreak: boolean;
+  breakDuration: number; // Changed from skippedBreak
   hoursWorked: number;
   pay: number;
   notes?: string;

@@ -24,7 +24,8 @@ export const exportToPdf = (logs: WorkLog[], username: string, currency: string)
     doc.text(`Total Earnings: ${currency}${totalEarnings.toFixed(2)}`, 14, 36);
 
     // Table
-    const tableColumn = ["Date", "Work Type", "Start Time", "End Time", "Skipped Break", "Hours Worked", "Pay Type", `Pay Rate (${currency})`, `Pay (${currency})`, "Notes"];
+    // Changed "Skipped Break" to "Break (hrs)"
+    const tableColumn = ["Date", "Work Type", "Start Time", "End Time", "Break (hrs)", "Hours Worked", "Pay Type", `Pay Rate (${currency})`, `Pay (${currency})`, "Notes"];
     const tableRows: (string | number)[][] = [];
 
     // Sort logs by date ascending for the report
@@ -36,7 +37,8 @@ export const exportToPdf = (logs: WorkLog[], username: string, currency: string)
             log.workType === 'Custom' ? log.customWorkType || 'Custom' : log.workType,
             log.startTime,
             log.endTime,
-            log.skippedBreak ? 'Yes' : 'No',
+            // Display break duration
+            log.breakDuration === 0 ? '0.0 hrs' : `${log.breakDuration.toFixed(1)} hrs`, 
             log.hoursWorked.toFixed(2),
             log.payType === 'Custom Pay' ? 'Custom' : log.payType,
             log.payType === 'Custom Pay' ? (log.customPayRate || 0).toFixed(2) : 'N/A',

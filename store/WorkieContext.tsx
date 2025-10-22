@@ -12,12 +12,15 @@ interface AppState {
     settings: UserSettings;
 }
 
+// Update the Omit type for ADD_LOG action
+type AddLogPayload = Omit<WorkLog, 'id' | 'hoursWorked' | 'pay'>;
+
 type Action =
     | { type: 'LOGIN'; payload: string }
     | { type: 'LOGOUT' }
     | { type: 'SET_USERS'; payload: string[] }
     | { type: 'SET_LOGS'; payload: WorkLog[] }
-    | { type: 'ADD_LOG'; payload: Omit<WorkLog, 'id' | 'hoursWorked' | 'pay'> }
+    | { type: 'ADD_LOG'; payload: AddLogPayload } // Updated payload type
     | { type: 'UPDATE_LOG'; payload: WorkLog }
     | { type: 'DELETE_LOG'; payload: string }
     | { type: 'RENAME_USER'; payload: { oldName: string; newName: string } }
@@ -56,9 +59,19 @@ const getLogsForUser = (username: string): WorkLog[] => {
     if (!data) return [];
     const logs: any[] = JSON.parse(data);
     return logs.map((log) => {
-        if (log.hasOwnProperty('skippedLunch')) {
+        // Migration logic for old logs
+        if (log.hasOwnProperty('skippedLunch')) { // Handle very old "skippedLunch"
             log.skippedBreak = log.skippedLunch;
             delete log.skippedLunch;
+        }
+        if (log.hasOwnProperty('skippedBreak')) { // Convert "skippedBreak" to "breakDuration"
+            // If skippedBreak exists, convert it to breakDuration
+            // Assuming default break is 1 hour if not skipped, 0 if skipped.
+            // This might need refinement based on exact old logic.
+            log.breakDuration = log.skippedBreak ? 0 : (log.workType === 'EC' ? 0.5 : 1);
+            delete log.skippedBreak;
+        } else if (!log.hasOwnProperty('breakDuration')) { // Ensure new logs also have a default breakDuration if missing (e.g., from old storage)
+            log.breakDuration = (log.workType === 'EC' ? 0.5 : 1);
         }
         return log;
     });
@@ -104,6 +117,7 @@ const reducer = (state: AppState, action: Action): AppState => {
             return { ...state, logs: action.payload };
         case 'ADD_LOG': {
             if (!state.currentUser) return state;
+            // The payload now includes breakDuration
             const { hoursWorked, pay } = calculateHoursAndPay(action.payload, state.settings.payRates);
             const newLog: WorkLog = {
                 id: new Date().toISOString(),
@@ -117,6 +131,7 @@ const reducer = (state: AppState, action: Action): AppState => {
         }
         case 'UPDATE_LOG': {
             if (!state.currentUser) return state;
+             // The payload now includes breakDuration
              const { hoursWorked, pay } = calculateHoursAndPay(action.payload, state.settings.payRates);
              const updatedLog = {...action.payload, hoursWorked, pay};
             const updatedLogs = state.logs.map(log => log.id === updatedLog.id ? updatedLog : log)

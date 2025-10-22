@@ -12,6 +12,8 @@ import DeleteConfirmationModal from './DeleteConfirmationModal';
 import CelebrationPopup from './CelebrationPopup';
 import OnboardingTour from './OnboardingTour';
 import { exportToPdf } from '../utils/csvUtils';
+import { WEEKLY_HOUR_LIMIT } from '../constants'; 
+import DatePicker from './ui/DatePicker'; // New import
 
 const Dashboard: React.FC = () => {
     const { state } = useWorkie();
@@ -50,7 +52,6 @@ const Dashboard: React.FC = () => {
     };
     
     const handleSave = () => {
-        closeModal();
         setShowCelebration(true);
         setTimeout(() => setShowCelebration(false), 2000);
     };
@@ -74,11 +75,11 @@ const Dashboard: React.FC = () => {
         setCurrentWeekStart(newWeekStart);
     }
     
-    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const selectedDate = e.target.value;
-        if (selectedDate) {
+    // Updated handleDateChange to work with DatePicker's (name, value) signature
+    const handleDateChange = (name: string, value: string) => {
+        if (value) {
             // Add 'T00:00:00' to parse the date in the user's local timezone
-            const dateObj = new Date(selectedDate + 'T00:00:00');
+            const dateObj = new Date(value + 'T00:00:00');
             const newWeekStart = getWeekStartDate(dateObj);
             setCurrentWeekStart(newWeekStart);
         }
@@ -101,13 +102,12 @@ const Dashboard: React.FC = () => {
                     <h2 className="text-xl font-bold text-gray-700">Weekly Overview</h2>
                      <div className="flex items-center gap-2">
                         <button onClick={() => changeWeek('prev')} className="p-2 rounded-full hover:bg-purple-200 transition"><IconChevronLeft className="h-6 w-6 text-purple-500" /></button>
-                         <input
-                            type="date"
+                         <DatePicker // Replaced native input with custom DatePicker
+                            name="weekStartDate"
                             value={formatDate(currentWeekStart)}
                             onChange={handleDateChange}
-                            className="bg-transparent text-gray-600 font-medium rounded-lg p-2 border-2 border-transparent hover:border-purple-200 transition duration-200 focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-purple-300 w-40 text-center"
-                            aria-label="Select week start date"
-                        />
+                            className="w-40" 
+                         />
                         <button onClick={() => changeWeek('next')} className="p-2 rounded-full hover:bg-purple-200 transition"><IconChevronRight className="h-6 w-6 text-purple-500" /></button>
                     </div>
                 </div>
@@ -139,7 +139,15 @@ const Dashboard: React.FC = () => {
                 </div>
             </main>
 
-            {isModalOpen && <LogModal log={editingLog} onClose={closeModal} onSave={handleSave} />}
+            {isModalOpen && <LogModal 
+                log={editingLog} 
+                onClose={closeModal} 
+                onSave={handleSave} 
+                allLogs={state.logs} 
+                payRates={state.settings.payRates} 
+                weeklyHourLimit={WEEKLY_HOUR_LIMIT} 
+                currency={state.settings.currency} 
+            />}
             {deletingLog && <DeleteConfirmationModal log={deletingLog} onClose={closeDeleteModal} />}
             {showCelebration && <CelebrationPopup />}
         </div>
@@ -147,3 +155,4 @@ const Dashboard: React.FC = () => {
 };
 
 export default Dashboard;
+    
