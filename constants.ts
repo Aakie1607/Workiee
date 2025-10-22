@@ -2,7 +2,7 @@ export const WORK_TYPES = ['SA', 'UKSR', 'EC', 'Custom'];
 export const PAY_TYPES = ['SP2', 'SP7', 'Custom Pay'];
 
 export const PAY_RATES: { [key: string]: number } = {
-  SP2: 14.54,
+  SP2: 14.42, // Changed from 14.54 to 14.42
   SP7: 15.52,
 };
 

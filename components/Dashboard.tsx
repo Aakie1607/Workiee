@@ -12,8 +12,8 @@ import CelebrationPopup from './CelebrationPopup';
 import OnboardingTour from './OnboardingTour';
 import { exportToPdf } from '../utils/csvUtils';
 import { WEEKLY_HOUR_LIMIT } from '../constants'; 
-import DatePicker from './ui/DatePicker'; // New import
-import DailyCalendarModal from './DailyCalendarModal'; // New import
+import DatePicker from './ui/DatePicker';
+import DailyCalendarModal from './DailyCalendarModal';
 
 const Dashboard: React.FC = () => {
     const { state } = useWorkie();

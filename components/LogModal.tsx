@@ -5,8 +5,8 @@ import { WORK_TYPES, PAY_TYPES, BREAK_OPTIONS_MODAL, BREAK_OPTION_LABELS, WEEKLY
 import { formatDate, getWeekStartDate, addDays } from '../utils/dateUtils';
 import { IconClose } from './icons';
 import { calculateHoursAndPay } from '../utils/calculationUtils';
-import Dropdown from './ui/Dropdown'; // New import
-import DatePicker from './ui/DatePicker'; // New import
+import Dropdown from './ui/Dropdown';
+import DatePicker from './ui/DatePicker';
 
 interface LogModalProps {
     log: WorkLog | null; // Null when adding new, populated when editing
