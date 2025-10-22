@@ -125,7 +125,7 @@ const reducer = (state: AppState, action: Action): AppState => {
                 hoursWorked,
                 pay,
             };
-            const updatedLogs = [...state.logs, newLog].sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+            const updatedLogs = [...state.logs, newLog].sort((a,b) => new Date(b.date + 'T00:00:00').getTime() - new Date(a.date + 'T00:00:00').getTime());
             saveLogsForUser(state.currentUser, updatedLogs);
             return { ...state, logs: updatedLogs };
         }
@@ -135,7 +135,7 @@ const reducer = (state: AppState, action: Action): AppState => {
              const { hoursWorked, pay } = calculateHoursAndPay(action.payload, state.settings.payRates);
              const updatedLog = {...action.payload, hoursWorked, pay};
             const updatedLogs = state.logs.map(log => log.id === updatedLog.id ? updatedLog : log)
-                .sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+                .sort((a,b) => new Date(b.date + 'T00:00:00').getTime() - new Date(a.date + 'T00:00:00').getTime());
             saveLogsForUser(state.currentUser, updatedLogs);
             return { ...state, logs: updatedLogs };
         }

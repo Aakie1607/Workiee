@@ -35,11 +35,23 @@ const TimePicker: React.FC<TimePickerProps> = ({ label, name, value, onChange, e
     const minutes = ['00', '15', '30', '45'];
 
     const handleHourChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        onChange(name, `${e.target.value || ''}:${minute || '00'}`); // Use '' as fallback for empty
+        const newHour = e.target.value;
+        if (!newHour) { // If hour is cleared
+            onChange(name, ''); // Clear the whole time
+        } else {
+            const newMinute = minute || '00'; // Default minute if current is empty
+            onChange(name, `${newHour}:${newMinute}`);
+        }
     };
 
     const handleMinuteChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        onChange(name, `${hour || '00'}:${e.target.value || ''}`); // Use '' as fallback for empty
+        const newMinute = e.target.value;
+        if (!newMinute) { // If minute is cleared
+            onChange(name, ''); // Clear the whole time
+        } else {
+            const newHour = hour || '00'; // Default hour if current is empty
+            onChange(name, `${newHour}:${newMinute}`);
+        }
     };
 
     // Conditional styling based on error and hasSubmitted

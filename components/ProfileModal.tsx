@@ -84,7 +84,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ onClose }) => {
         const selectedYear = selectedDate.getFullYear();
 
         const monthlyLogs = state.logs.filter(log => {
-            const logDate = new Date(log.date);
+            // Ensure log.date is parsed as a local date to avoid timezone issues
+            const logDate = new Date(log.date + 'T00:00:00');
             return logDate.getMonth() === selectedMonth && logDate.getFullYear() === selectedYear;
         });
 

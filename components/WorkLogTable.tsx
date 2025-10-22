@@ -54,7 +54,7 @@ const WorkLogTable: React.FC<WorkLogTableProps> = ({ logs, onEdit, onDelete }) =
     }, [logs]);
 
     const sortedDates = useMemo(() => {
-        return Object.keys(groupedLogs).sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+        return Object.keys(groupedLogs).sort((a, b) => new Date(b + 'T00:00:00').getTime() - new Date(a + 'T00:00:00').getTime());
     }, [groupedLogs]);
 
     if (logs.length === 0) {
