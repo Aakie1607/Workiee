@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { IconChevronLeft, IconChevronRight } from '../icons'; 
 import { formatDate } from '../../utils/dateUtils'; 
@@ -166,4 +165,3 @@ const DatePicker: React.FC<DatePickerProps> = ({
 };
 
 export default DatePicker;
-    

@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useEffect } from 'react';
 import { useWorkie } from '../store/WorkieContext';
 import { WorkLog } from '../types';
@@ -7,13 +6,14 @@ import BentoDashboard from './BentoDashboard';
 import WorkLogTable from './WorkLogTable';
 import Header from './Header';
 import { addDays, formatDate, getWeekStartDate } from '../utils/dateUtils';
-import { IconPlus, IconChevronLeft, IconChevronRight, IconDownload } from './icons';
+import { IconPlus, IconChevronLeft, IconChevronRight, IconDownload, IconCalendar } from './icons';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import CelebrationPopup from './CelebrationPopup';
 import OnboardingTour from './OnboardingTour';
 import { exportToPdf } from '../utils/csvUtils';
 import { WEEKLY_HOUR_LIMIT } from '../constants'; 
 import DatePicker from './ui/DatePicker'; // New import
+import DailyCalendarModal from './DailyCalendarModal'; // New import
 
 const Dashboard: React.FC = () => {
     const { state } = useWorkie();
@@ -23,6 +23,8 @@ const Dashboard: React.FC = () => {
     const [showCelebration, setShowCelebration] = useState(false);
     const [currentWeekStart, setCurrentWeekStart] = useState<Date>(getWeekStartDate(new Date()));
     const [isTourOpen, setIsTourOpen] = useState(false);
+    const [showDailyCalendar, setShowDailyCalendar] = useState(false); // New state for daily calendar visibility
+    const [selectedDailyDate, setSelectedDailyDate] = useState<string | null>(null); // New state for selected daily date
 
     useEffect(() => {
         if (state.currentUser) {
@@ -70,9 +72,19 @@ const Dashboard: React.FC = () => {
         return state.logs.filter(log => log.date >= weekStartStr && log.date <= weekEndStr);
     }, [state.logs, currentWeekStart]);
 
+    // New memoized value for logs to display in the table, considering daily selection
+    const displayedLogs = useMemo(() => {
+        if (selectedDailyDate) {
+            return state.logs.filter(log => log.date === selectedDailyDate);
+        }
+        return weeklyLogs;
+    }, [state.logs, weeklyLogs, selectedDailyDate]);
+
+
     const changeWeek = (direction: 'prev' | 'next') => {
         const newWeekStart = addDays(currentWeekStart, direction === 'prev' ? -7 : 7);
         setCurrentWeekStart(newWeekStart);
+        setSelectedDailyDate(null); // Clear daily selection when week changes
     }
     
     // Updated handleDateChange to work with DatePicker's (name, value) signature
@@ -83,6 +95,7 @@ const Dashboard: React.FC = () => {
             const newWeekStart = getWeekStartDate(dateObj);
             setCurrentWeekStart(newWeekStart);
         }
+        setSelectedDailyDate(null); // Clear daily selection when week changes
     };
 
     const handleExport = () => {
@@ -125,6 +138,14 @@ const Dashboard: React.FC = () => {
                                 <IconDownload className="h-5 w-5" />
                                 Export
                             </button>
+                            {/* New Calendar Button */}
+                            <button
+                                onClick={() => setShowDailyCalendar(true)}
+                                className="flex items-center gap-2 px-4 py-2 text-purple-600 bg-purple-100 rounded-xl hover:bg-purple-200 transition"
+                            >
+                                <IconCalendar className="h-5 w-5" />
+                                Calendar
+                            </button>
                             <button
                                 onClick={() => openModal()}
                                 className="flex items-center gap-2 px-4 py-2 text-white bg-purple-500 rounded-xl hover:bg-purple-600 transition shadow-md hover:shadow-lg"
@@ -135,7 +156,7 @@ const Dashboard: React.FC = () => {
                         </div>
                     </div>
                     
-                    <WorkLogTable logs={weeklyLogs} onEdit={openModal} onDelete={openDeleteModal} />
+                    <WorkLogTable logs={displayedLogs} onEdit={openModal} onDelete={openDeleteModal} />
                 </div>
             </main>
 
@@ -150,9 +171,20 @@ const Dashboard: React.FC = () => {
             />}
             {deletingLog && <DeleteConfirmationModal log={deletingLog} onClose={closeDeleteModal} />}
             {showCelebration && <CelebrationPopup />}
+
+            {/* Daily Calendar Modal */}
+            {showDailyCalendar && (
+                <DailyCalendarModal
+                    onClose={() => setShowDailyCalendar(false)}
+                    onDateSelect={(date) => {
+                        setSelectedDailyDate(date);
+                        setShowDailyCalendar(false);
+                    }}
+                    selectedDate={selectedDailyDate}
+                />
+            )}
         </div>
     );
 };
 
 export default Dashboard;
-    
