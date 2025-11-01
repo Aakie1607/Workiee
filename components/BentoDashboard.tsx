@@ -79,13 +79,13 @@ const BentoDashboard: React.FC<BentoDashboardProps> = ({ logs, weekStart }) => {
                                 value={`${state.settings.currency}${summary.totalEarnings.toFixed(2)}`}
                                 subtitle="This week"
                             />
-                            <div className="w-full sm:w-px h-px sm:h-auto bg-gray-900/10 my-2 sm:my-4 mx-0 sm:mx-4"></div>
+                            <div className="hidden sm:block w-px h-auto bg-gray-900/10 my-2 md:my-4 mx-0 md:mx-4"></div>
                             <SummaryStat
                                 title="Weekly Hours"
                                 value={summary.totalHours.toFixed(2)}
                                 subtitle="Logged"
                             />
-                            <div className="w-full sm:w-px h-px sm:h-auto bg-gray-900/10 my-2 sm:my-4 mx-0 sm:mx-4"></div>
+                            <div className="hidden sm:block w-px h-auto bg-gray-900/10 my-2 md:my-4 mx-0 md:mx-4"></div>
                             <SummaryStat
                                 title="Hours Remaining"
                                 value={summary.hoursRemaining.toFixed(2)}
@@ -95,12 +95,12 @@ const BentoDashboard: React.FC<BentoDashboardProps> = ({ logs, weekStart }) => {
                         </div>
                     </BentoCard>
                 </div>
-                 <div className="md:col-span-3 h-[22rem]">
+                 <div className="md:col-span-3 min-h-[16rem] md:h-[22rem]"> {/* Adjusted height for responsiveness */}
                    <BentoCard
                        title="Daily Hours Breakdown"
                        colors={[lightMint, lightPurple, lightPink]}
                    >
-                     <div className="flex-grow pt-4 h-full">
+                     <div className="flex-grow pt-4 h-full"> {/* Added flex-grow to make chart fill space */}
                         <WorkChart logs={logs} weekStart={weekStart} />
                      </div>
                    </BentoCard>

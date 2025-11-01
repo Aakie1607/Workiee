@@ -34,7 +34,6 @@ const WelcomeScreen: React.FC = () => {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen p-4">
-            <img src="https://res.cloudinary.com/dt2cxv6zw/image/upload/c_crop,w_320,h_180,ar_16:9/v1759421648/workie__1_-removebg-preview_uynvtc.png" alt="Workie Logo" className="w-full max-w-xs mb-8" />
             <div className="w-full max-w-md p-8 space-y-8 bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg animate-fade-in-scale">
                 <style>{`
                     @keyframes fade-in-scale {
@@ -47,14 +46,15 @@ const WelcomeScreen: React.FC = () => {
                     .animate-fade-in-up-1 { animation: fade-in-scale 0.5s ease-out 0.1s forwards; opacity: 0; }
                     .animate-fade-in-up-2 { animation: fade-in-scale 0.5s ease-out 0.2s forwards; opacity: 0; }
                     .animate-fade-in-up-3 { animation: fade-in-scale 0.5s ease-out 0.3s forwards; opacity: 0; }
+                    .animate-fade-in-up-4 { animation: fade-in-scale 0.5s ease-out 0.4s forwards; opacity: 0; }
                 `}</style>
+                <img src="https://res.cloudinary.com/dt2cxv6zw/image/upload/c_crop,w_320,h_180,ar_16:9/v1759421648/workie__1_-removebg-preview_uynvtc.png" alt="Workie Logo" className="w-32 mx-auto mb-6" />
                 <div className="text-center">
-                    <h1 className="text-3xl font-bold text-gray-800">Welcome to Workie</h1>
-                    <p className="mt-2 text-gray-600 text-lg">Your friendly work hours calculator.</p>
+                    <p className="text-lg text-gray-700 animate-fade-in-up-1">Workie helps you track your work hours and calculate your pay with ease.</p>
                 </div>
 
                 <div className="space-y-4">
-                    <div className="animate-fade-in-up-1">
+                    <div className="animate-fade-in-up-2">
                         <input
                             type="text"
                             value={username}
@@ -67,14 +67,14 @@ const WelcomeScreen: React.FC = () => {
                     </div>
                     <button
                         onClick={handleLogin}
-                        className="w-full px-4 py-3 text-lg font-semibold text-purple-900 bg-purple-300 rounded-xl hover:bg-purple-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-400 transition duration-200 animate-fade-in-up-2"
+                        className="w-full px-4 py-3 text-lg font-semibold text-purple-900 bg-purple-300 rounded-xl hover:bg-purple-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-400 transition duration-200 animate-fade-in-up-3"
                     >
                         Continue
                     </button>
                 </div>
 
                 {state.users.length > 0 && (
-                    <div className="pt-4 border-t border-gray-200 animate-fade-in-up-3">
+                    <div className="pt-4 border-t border-gray-200 animate-fade-in-up-4">
                         <h3 className="text-sm font-medium text-center text-gray-500">Or select a previous user:</h3>
                         <div className="mt-3 flex flex-wrap justify-center gap-2">
                             {state.users.map(user => (
@@ -89,6 +89,11 @@ const WelcomeScreen: React.FC = () => {
                         </div>
                     </div>
                 )}
+
+                <div className="mt-6 pt-4 border-t border-gray-200 text-center text-xs text-gray-500 animate-fade-in-up-4">
+                    <p>Your data is stored securely in your browser and is never sent to a server. Workie respects your privacy.</p>
+                    <a href="#" className="text-purple-600 hover:underline mt-1 block">Privacy Policy</a>
+                </div>
             </div>
         </div>
     );
