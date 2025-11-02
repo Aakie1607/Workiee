@@ -32,3 +32,13 @@ export const getWeekDates = (weekStart: Date): Date[] => {
     }
     return dates;
 };
+
+// Helper to format a Date object to "Month Year" string (e.g., "September 2024")
+export const formatMonthYear = (date: Date): string => {
+    return date.toLocaleString('default', { month: 'long', year: 'numeric' });
+};
+
+// Helper to format a Date object to short day of week (e.g., "MON")
+export const formatDayOfWeekShort = (date: Date): string => {
+    return date.toLocaleString('default', { weekday: 'short' }).toUpperCase();
+};

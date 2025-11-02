@@ -14,6 +14,7 @@ import { exportToPdf } from '../utils/csvUtils';
 import { WEEKLY_HOUR_LIMIT } from '../constants'; 
 import DatePicker from './ui/DatePicker';
 import DailyCalendarModal from './DailyCalendarModal';
+import UpcomingShifts from './UpcomingShifts';
 
 const Dashboard: React.FC = () => {
     const { state } = useWorkie();
@@ -23,8 +24,8 @@ const Dashboard: React.FC = () => {
     const [showCelebration, setShowCelebration] = useState(false);
     const [currentWeekStart, setCurrentWeekStart] = useState<Date>(getWeekStartDate(new Date()));
     const [isTourOpen, setIsTourOpen] = useState(false);
-    const [showDailyCalendar, setShowDailyCalendar] = useState(false); // New state for daily calendar visibility
-    const [selectedDailyDate, setSelectedDailyDate] = useState<string | null>(null); // New state for selected daily date
+    const [showDailyCalendar, setShowDailyCalendar] = useState(false);
+    const [selectedDailyDate, setSelectedDailyDate] = useState<string | null>(null);
 
     useEffect(() => {
         if (state.currentUser) {
@@ -104,18 +105,53 @@ const Dashboard: React.FC = () => {
         }
     };
 
+    // Filter logs to only show truly upcoming ones, considering date and time
+    const upcomingShifts = useMemo(() => {
+        const now = new Date();
+        const todayDateStr = formatDate(now); // YYYY-MM-DD
+
+        return state.logs.filter(log => {
+            const logDateStartOfDay = new Date(log.date + 'T00:00:00'); // Normalize log date to start of day
+            const todayStartOfDay = new Date(todayDateStr + 'T00:00:00'); // Today's date at 00:00:00
+
+            // If the log date is in the future (strictly greater than today's date)
+            if (logDateStartOfDay.getTime() > todayStartOfDay.getTime()) {
+                return true;
+            }
+
+            // If the log date is today, check if its end time is in the future
+            if (log.date === todayDateStr) {
+                const logDateTimeEnd = new Date(`${log.date}T${log.endTime}`); // Full log end date-time
+                return logDateTimeEnd > now;
+            }
+
+            return false;
+        }).sort((a,b) => {
+            const dateTimeA = new Date(a.date + 'T' + a.startTime).getTime();
+            const dateTimeB = new Date(b.date + 'T' + b.startTime).getTime();
+            return dateTimeA - dateTimeB;
+        });
+    }, [state.logs]);
+
     return (
         <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
             {isTourOpen && <OnboardingTour onComplete={handleTourComplete} />}
             <Header />
 
             <main className="mt-8 space-y-8">
+                {/* Upcoming Shifts Section */}
+                {upcomingShifts.length > 0 && (
+                    <div>
+                        <h2 className="text-xl font-bold text-gray-700 mb-4">Your Shifts</h2>
+                        <UpcomingShifts shifts={upcomingShifts} />
+                    </div>
+                )}
                 
                 <div className="flex justify-between items-center">
                     <h2 className="text-xl font-bold text-gray-700">Weekly Overview</h2>
                      <div className="flex items-center gap-2">
                         <button onClick={() => changeWeek('prev')} className="p-2 rounded-full hover:bg-purple-200 transition"><IconChevronLeft className="h-6 w-6 text-purple-500" /></button>
-                         <DatePicker // Replaced native input with custom DatePicker
+                         <DatePicker
                             name="weekStartDate"
                             value={formatDate(currentWeekStart)}
                             onChange={handleDateChange}

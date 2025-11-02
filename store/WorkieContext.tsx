@@ -2,6 +2,7 @@ import React, { createContext, useReducer, useContext, useEffect, ReactNode } fr
 import { WorkLog, UserSettings } from '../types';
 import { calculateHoursAndPay } from '../utils/calculationUtils';
 import { PAY_RATES } from '../constants';
+import { addDays, formatDate } from '../utils/dateUtils'; // Import date utility for dummy data
 
 // State and Action Types
 interface AppState {
