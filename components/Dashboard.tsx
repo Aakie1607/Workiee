@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useEffect } from 'react';
 import { useWorkie } from '../store/WorkieContext';
 import { WorkLog } from '../types';
@@ -15,6 +16,7 @@ import { WEEKLY_HOUR_LIMIT } from '../constants';
 import DatePicker from './ui/DatePicker';
 import DailyCalendarModal from './DailyCalendarModal';
 import UpcomingShifts from './UpcomingShifts';
+import MonthSelectionModal from './MonthSelectionModal';
 
 const Dashboard: React.FC = () => {
     const { state } = useWorkie();
@@ -26,6 +28,7 @@ const Dashboard: React.FC = () => {
     const [isTourOpen, setIsTourOpen] = useState(false);
     const [showDailyCalendar, setShowDailyCalendar] = useState(false);
     const [selectedDailyDate, setSelectedDailyDate] = useState<string | null>(null);
+    const [showMonthSelectionModal, setShowMonthSelectionModal] = useState(false);
 
     useEffect(() => {
         if (state.currentUser) {
@@ -99,10 +102,30 @@ const Dashboard: React.FC = () => {
         setSelectedDailyDate(null); // Clear daily selection when week changes
     };
 
+    // Modified handleExport to open month selection modal
     const handleExport = () => {
-        if (state.currentUser) {
-            exportToPdf(weeklyLogs, state.currentUser, state.settings.currency);
+        setShowMonthSelectionModal(true);
+    };
+
+    // New function to handle export after month selection, now async and returns boolean
+    const handleExportSelectedMonth = async (year: number, month: number): Promise<boolean> => {
+        if (!state.currentUser) return false;
+
+        const firstDayOfMonth = new Date(year, month, 1);
+        const lastDayOfMonth = new Date(year, month + 1, 0);
+
+        const logsForMonth = state.logs.filter(log => {
+            const logDate = new Date(log.date + 'T00:00:00');
+            return logDate >= firstDayOfMonth && logDate <= lastDayOfMonth;
+        });
+
+        if (logsForMonth.length === 0) {
+            return false; // No logs found for the selected month
         }
+
+        const monthYearLabel = firstDayOfMonth.toLocaleString('default', { month: 'long', year: 'numeric' });
+        exportToPdf(logsForMonth, state.currentUser, state.settings.currency, monthYearLabel);
+        return true; // Logs exported successfully
     };
 
     // Filter logs to only show truly upcoming ones, considering date and time
@@ -217,6 +240,14 @@ const Dashboard: React.FC = () => {
                         setShowDailyCalendar(false);
                     }}
                     selectedDate={selectedDailyDate}
+                />
+            )}
+
+            {/* Month Selection Modal for Export */}
+            {showMonthSelectionModal && (
+                <MonthSelectionModal 
+                    onClose={() => setShowMonthSelectionModal(false)}
+                    onExport={handleExportSelectedMonth}
                 />
             )}
         </div>

@@ -1,9 +1,10 @@
+
 import { WorkLog } from '../types';
 
 // Add this to handle the global jsPDF variable from the CDN
 declare const jspdf: any;
 
-export const exportToPdf = (logs: WorkLog[], username: string, currency: string) => {
+export const exportToPdf = (logs: WorkLog[], username: string, currency: string, monthYearLabel?: string) => {
     if (logs.length === 0) {
         alert("No logs to export.");
         return;
@@ -12,9 +13,13 @@ export const exportToPdf = (logs: WorkLog[], username: string, currency: string)
     const { jsPDF } = jspdf;
     const doc = new jsPDF({ orientation: 'landscape' });
 
+    const reportTitle = monthYearLabel 
+        ? `Work Logs for ${username} - ${monthYearLabel}`
+        : `Work Logs for ${username}`;
+
     // Title
     doc.setFontSize(18);
-    doc.text(`Work Logs for ${username}`, 14, 20);
+    doc.text(reportTitle, 14, 20);
 
     // Summary
     const totalHours = logs.reduce((sum, log) => sum + log.hoursWorked, 0);
@@ -68,5 +73,9 @@ export const exportToPdf = (logs: WorkLog[], username: string, currency: string)
     });
 
     const date = new Date().toISOString().split('T')[0];
-    doc.save(`workie_logs_${username}_${date}.pdf`);
+    const fileName = monthYearLabel 
+        ? `workie_logs_${username}_${monthYearLabel.replace(/\s/g, '_')}.pdf`
+        : `workie_logs_${username}_${date}.pdf`;
+    
+    doc.save(fileName);
 };
