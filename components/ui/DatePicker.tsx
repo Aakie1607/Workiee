@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { IconChevronLeft, IconChevronRight } from '../icons'; 
 import { formatDate } from '../../utils/dateUtils'; 
@@ -151,7 +152,8 @@ const DatePicker: React.FC<DatePickerProps> = ({
                     </div>
                 </div>
             )}
-            <style jsx>{`
+            {/* Remove `jsx` attribute from style tag */}
+            <style>{`
                 .animate-slide-down-fade {
                     animation: slideDownFade 0.2s ease-out forwards;
                 }

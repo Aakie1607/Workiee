@@ -69,10 +69,10 @@ const getLogsForUser = (username: string): WorkLog[] => {
             // If skippedBreak exists, convert it to breakDuration
             // Assuming default break is 1 hour if not skipped, 0 if skipped.
             // This might need refinement based on exact old logic.
-            log.breakDuration = log.skippedBreak ? 0 : (log.workType === 'EC' ? 0.5 : 1);
+            log.breakDuration = log.skippedBreak ? 0 : (log.workType === 'Champ' ? 0.5 : 1);
             delete log.skippedBreak;
         } else if (!log.hasOwnProperty('breakDuration')) { // Ensure new logs also have a default breakDuration if missing (e.g., from old storage)
-            log.breakDuration = (log.workType === 'EC' ? 0.5 : 1);
+            log.breakDuration = (log.workType === 'Champ' ? 0.5 : 1);
         }
         return log;
     });

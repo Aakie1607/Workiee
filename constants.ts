@@ -1,15 +1,14 @@
-export const WORK_TYPES = ['SA', 'UKSR', 'EC', 'Custom'];
-export const PAY_TYPES = ['SP2', 'SP7', 'Custom Pay'];
+export const WORK_TYPES = ['SA', 'UKSR', 'Champ', 'Custom'];
+export const PAY_TYPES = ['SP7', 'Custom Pay'];
 
 export const PAY_RATES: { [key: string]: number } = {
-  SP2: 14.42, // Changed from 14.54 to 14.42
-  SP7: 15.52,
+  SP7: 17.00,
 };
 
 export const BREAK_DURATIONS: { [key: string]: number } = {
   SA: 1, // 1 hour
   UKSR: 1, // 1 hour
-  EC: 0.5, // 30 minutes
+  Champ: 0.5, // 30 minutes
 };
 
 export const BREAK_OPTIONS_MODAL = ['0', '0.5', '1', 'Custom'];

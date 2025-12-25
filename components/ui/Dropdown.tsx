@@ -1,4 +1,5 @@
 
+
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { IconChevronDown } from '../icons'; 
 
@@ -53,7 +54,7 @@ const Dropdown: React.FC<DropdownProps> = ({
     
     return (
         <div className={`relative ${className}`} ref={dropdownRef}>
-            <label className="block text-sm font-medium text-gray-600 mb-1">{label}</label>
+            {label && <label className="block text-sm font-medium text-gray-600 mb-1">{label}</label>}
             <button
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
@@ -84,7 +85,8 @@ const Dropdown: React.FC<DropdownProps> = ({
                     ))}
                 </ul>
             )}
-            <style jsx>{`
+            {/* Remove `jsx` attribute from style tag */}
+            <style>{`
                 .animate-slide-down-fade {
                     animation: slideDownFade 0.2s ease-out forwards;
                 }
@@ -99,4 +101,3 @@ const Dropdown: React.FC<DropdownProps> = ({
 };
 
 export default Dropdown;
-    

@@ -1,3 +1,4 @@
+
 import React, { useMemo } from 'react';
 import { WorkLog } from '../types';
 import { IconEdit, IconDelete } from './icons';
@@ -15,7 +16,7 @@ const getWorkTypeStyle = (workType: string): string => {
     switch (workType) {
         case 'SA': return 'bg-purple-100 text-purple-800';
         case 'UKSR': return 'bg-blue-100 text-blue-800';
-        case 'EC': return 'bg-green-100 text-green-800';
+        case 'Champ': return 'bg-green-100 text-green-800';
         case 'Custom': return 'bg-gray-100 text-gray-800';
         default: return 'bg-yellow-100 text-yellow-800';
     }
@@ -61,6 +62,7 @@ const WorkLogTable: React.FC<WorkLogTableProps> = ({ logs, onEdit, onDelete }) =
         return (
             <div className="text-center py-16 bg-white/70 backdrop-blur-sm rounded-2xl shadow-md flex flex-col items-center justify-center">
                 <svg className="w-16 h-16 text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  {/* FIX: Corrected typo 'strokeLineJoin' to 'strokeLinejoin' */}
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                 </svg>
                 <p className="text-gray-700 font-semibold text-lg">No logs for this week</p>
@@ -92,32 +94,54 @@ const WorkLogTable: React.FC<WorkLogTableProps> = ({ logs, onEdit, onDelete }) =
                         </div>
 
                         {/* Individual Logs for this day */}
-                        <div className="space-y-3">
+                        <div className="space-y-2"> {/* Reduced space-y for compactness */}
                           {dailyLogs.map(log => {
                             const workTypeLabel = log.workType === 'Custom' ? log.customWorkType : log.workType;
                             return (
-                              <div key={log.id} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 p-3 border border-gray-100 rounded-lg bg-gray-50">
-                                <div className="flex-grow">
-                                    <span className={`px-2.5 py-1 text-xs font-semibold rounded-full ${getWorkTypeStyle(log.workType)}`}>
-                                        {workTypeLabel}
-                                    </span>
-                                    <p className="text-base text-gray-800 mt-2 font-medium">{log.startTime} - {log.endTime}</p>
-                                    <p className="text-sm text-gray-500">
-                                        {log.hoursWorked.toFixed(2)} hrs worked 
-                                        {log.breakDuration > 0 ? ` (${log.breakDuration.toFixed(1)} hrs break)` : ' (No break)'}
-                                        (Pay: {state.settings.currency}{log.pay.toFixed(2)})
-                                    </p>
-                                    {log.notes && <p className="text-sm text-gray-500 mt-1 italic truncate">"{log.notes}"</p>}
+                                <div key={log.id} className="p-2 border border-gray-100 rounded-lg bg-gray-50 text-sm
+                                    flex flex-col gap-1
+                                    md:grid md:grid-cols-[auto_minmax(100px,1fr)_minmax(120px,1.5fr)_minmax(0,1.5fr)_auto] md:items-center md:gap-3
+                                ">
+                                    {/* Work Type (visible on all screens) */}
+                                    <div className="flex-shrink-0 md:justify-self-start">
+                                        <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${getWorkTypeStyle(log.workType)}`}>
+                                            {workTypeLabel}
+                                        </span>
+                                    </div>
+
+                                    {/* Time Range & Combined Hours/Pay (Mobile view) */}
+                                    <div className="flex flex-wrap items-baseline gap-x-2 text-gray-800 md:hidden">
+                                        <span className="font-medium">{log.startTime} - {log.endTime}</span>
+                                        <span className="text-gray-600">({log.hoursWorked.toFixed(2)}h {log.breakDuration > 0 ? `-${log.breakDuration.toFixed(1)}b` : ''})</span>
+                                        <span className="font-bold text-purple-700">{state.settings.currency}{log.pay.toFixed(2)}</span>
+                                    </div>
+
+                                    {/* Time Range (Desktop view) */}
+                                    <div className="hidden md:block text-gray-800 font-medium">
+                                        {log.startTime} - {log.endTime}
+                                    </div>
+
+                                    {/* Hours/Pay (Desktop view) */}
+                                    <div className="hidden md:block text-gray-700">
+                                        <span className="text-gray-600">{log.hoursWorked.toFixed(2)}h {log.breakDuration > 0 ? `(${log.breakDuration.toFixed(1)}b)` : ''}</span>
+                                        <span className="font-bold text-purple-700 ml-1">{state.settings.currency}{log.pay.toFixed(2)}</span>
+                                    </div>
+                                    
+                                    {/* Notes */}
+                                    <div className="text-gray-500 text-xs italic truncate">
+                                        {log.notes || 'No notes'}
+                                    </div>
+
+                                    {/* Actions */}
+                                    <div className="flex-shrink-0 flex items-center gap-1 justify-end">
+                                        <button onClick={() => onEdit(log)} aria-label="Edit log" className="text-gray-500 hover:text-blue-600 p-1 rounded-full hover:bg-blue-100 transition-colors">
+                                            <IconEdit className="h-4 w-4" /> {/* Smaller icons */}
+                                        </button>
+                                        <button onClick={() => onDelete(log)} aria-label="Delete log" className="text-gray-500 hover:text-red-600 p-1 rounded-full hover:bg-red-100 transition-colors">
+                                            <IconDelete className="h-4 w-4" /> {/* Smaller icons */}
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className="flex-shrink-0 flex items-center gap-2 justify-start sm:justify-end">
-                                    <button onClick={() => onEdit(log)} aria-label="Edit log" className="text-gray-500 hover:text-blue-600 p-2 rounded-full hover:bg-blue-100 transition-colors">
-                                        <IconEdit className="h-5 w-5" />
-                                    </button>
-                                    <button onClick={() => onDelete(log)} aria-label="Delete log" className="text-gray-500 hover:text-red-600 p-2 rounded-full hover:bg-red-100 transition-colors">
-                                        <IconDelete className="h-5 w-5" />
-                                    </button>
-                                </div>
-                              </div>
                             );
                           })}
                         </div>

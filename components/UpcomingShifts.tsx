@@ -52,7 +52,7 @@ const UpcomingShifts: React.FC<UpcomingShiftsProps> = ({ shifts }) => {
             {sortedMonths.map(monthYear => (
                 <div key={monthYear}>
                     <h3 className="text-xl font-bold text-gray-700 mb-4" id={`shifts-for-${monthYear.replace(/\s/g, '-')}`}>{monthYear}</h3>
-                    <div className="space-y-4" role="group" aria-labelledby={`shifts-for-${monthYear.replace(/\s/g, '-')}`}>
+                    <div className="flex flex-wrap gap-3" role="group" aria-labelledby={`shifts-for-${monthYear.replace(/\s/g, '-')}`}> {/* Changed to flex wrap with gap */}
                         {groupedShifts[monthYear].map(shift => {
                             const shiftDate = new Date(shift.date + 'T00:00:00'); // Ensure local timezone parsing
                             const dayOfMonth = shiftDate.getDate();
@@ -60,19 +60,19 @@ const UpcomingShifts: React.FC<UpcomingShiftsProps> = ({ shifts }) => {
                             const shiftTitle = shift.workType === 'Custom' && shift.customWorkType ? shift.customWorkType : shift.workType;
 
                             return (
-                                <div key={shift.id} className="flex items-start gap-4 p-4 rounded-xl shadow-sm bg-purple-50" role="listitem" aria-label={`Shift on ${dayOfWeek}, ${dayOfMonth} ${monthYear}`}>
+                                <div key={shift.id} className="flex flex-shrink-0 flex-grow-0 basis-64 items-center gap-3 p-2 rounded-lg shadow-sm bg-purple-50 hover:bg-purple-100 transition-colors" role="listitem" aria-label={`Shift on ${dayOfWeek}, ${dayOfMonth} ${monthYear}`}> {/* Added basis, flex-shrink/grow, and shadow-sm */}
                                     {/* Date & Day */}
-                                    <div className="flex-shrink-0 flex flex-col items-center justify-center w-16 text-center">
-                                        <span className="font-bold text-gray-800 text-3xl">{dayOfMonth}</span>
-                                        <span className="text-gray-500 text-sm">{dayOfWeek}</span>
+                                    <div className="flex-shrink-0 flex flex-col items-center justify-center w-12 h-12 text-center bg-purple-100/50 rounded-md"> {/* Smaller square, bg, rounded */}
+                                        <span className="font-bold text-gray-800 text-xl leading-none">{dayOfMonth}</span> {/* Smaller font, no extra line height */}
+                                        <span className="text-gray-500 text-xs uppercase">{dayOfWeek}</span> {/* Smaller font, uppercase */}
                                     </div>
                                     {/* Shift Details */}
-                                    <div className="flex-grow border-l-4 border-purple-500 pl-4">
-                                        <p className="font-medium text-gray-800">
+                                    <div className="flex-grow border-l-2 border-purple-300 pl-3"> {/* Thinner border, reduced padding */}
+                                        <p className="font-medium text-gray-800 text-sm"> {/* Smaller font */}
                                             {shift.startTime} - {shift.endTime}
                                         </p>
-                                        <p className="text-gray-700 text-base">{shiftTitle}</p>
-                                        <p className="text-gray-500 text-sm truncate">{shift.notes || 'No additional details provided'}</p>
+                                        <p className="text-purple-700 text-sm font-semibold">{shiftTitle}</p> {/* Emphasized title */}
+                                        <p className="text-gray-500 text-xs italic truncate">{shift.notes || 'No additional details provided'}</p> {/* Smaller, italic notes */}
                                     </div>
                                 </div>
                             );
